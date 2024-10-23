@@ -59,7 +59,7 @@ export interface ImportantNews {
 
 interface Translation {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  languages_code: string;
+  languagesCode: string;
   title: string;
   content: string;
   buttonLabel: string;

@@ -43,7 +43,7 @@ export class FeaturesPositionHelper {
   constructor(private userRoles: string[]) {}
 
   public getFeaturePosition(feature: Feature): number {
-    const settingsByRole = feature.settings_by_role.find((sbr) =>
+    const settingsByRole = feature.settingsByRole.find((sbr) =>
       this.userRoles.includes(sbr.role),
     );
 

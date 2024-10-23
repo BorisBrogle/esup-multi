@@ -38,9 +38,9 @@
  */
 
 interface LoginPageContentTranslation {
-  languages_code: string;
-  connexion_text: string;
-  not_authenticated_text: string;
+  languagesCode: string;
+  connexionText: string;
+  notAuthenticatedText: string;
 }
 
 export interface LoginPageContentResultDto {

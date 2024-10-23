@@ -56,7 +56,7 @@ describe('FeaturesPositionHelper', () => {
       widget: null,
       position: null,
       translations: [],
-      settings_by_role: [
+      settingsByRole: [
         {
           role: 'r3',
           position: 30,
@@ -87,7 +87,7 @@ describe('FeaturesPositionHelper', () => {
       authorization: null,
       position: 5,
       translations: [],
-      settings_by_role: [
+      settingsByRole: [
         {
           role: 'r3',
           position: 30,
@@ -118,7 +118,7 @@ describe('FeaturesPositionHelper', () => {
       authorization: null,
       position: 5,
       translations: [],
-      settings_by_role: [
+      settingsByRole: [
         {
           role: 'r3',
           position: 30,
@@ -154,7 +154,7 @@ describe('FeaturesPositionHelper', () => {
       authorization: null,
       position: 5,
       translations: [],
-      settings_by_role: [
+      settingsByRole: [
         {
           role: 'r2',
           position: 20,
@@ -186,7 +186,7 @@ describe('FeaturesPositionHelper', () => {
       authorization: null,
       position: 5,
       translations: [],
-      settings_by_role: [
+      settingsByRole: [
         {
           role: 'r1',
           position: 10,

@@ -40,8 +40,13 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { FeaturesModule } from '@multi/features';
+import {ScheduleModule} from '@multi/schedule';
 
 const routes: Routes = [
+  {
+    path: 'schedule',
+    redirectTo: `${ScheduleModule.routerLink}`,
+  },
   {
     path: '',
     redirectTo: `${FeaturesModule.routerLink}/widgets`,

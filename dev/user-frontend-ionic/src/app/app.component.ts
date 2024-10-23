@@ -58,6 +58,10 @@ import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
 
+import { NgZone } from '@angular/core';
+import { Router } from '@angular/router';
+import { URLOpenListenerEvent } from '@capacitor/app';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -89,8 +93,12 @@ export class AppComponent implements OnInit, OnDestroy {
     private featuresService: FeaturesService,
     private notificationsService: NotificationsService,
     private statisticsService: StatisticsService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router,
+    private zone: NgZone
   ) {
+    this.initializeApp();
+
     currentLanguage$.subscribe((language) => {
       document.documentElement.lang = language || environment.defaultLanguage;
     });
@@ -226,6 +234,23 @@ export class AppComponent implements OnInit, OnDestroy {
     });
     this.appResumeListener.then((listener) => {
       listener.remove();
+    });
+  }
+
+  initializeApp() {
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+      this.zone.run(() => {
+        const domain = 'mobile-test.univ-lorraine.fr';
+
+        const pathArray = event.url.split(domain);
+        // The pathArray is now like ['https://devdactic.com', '/details/42']
+
+        // Get the last element with pop()
+        const appPath = pathArray.pop();
+        if (appPath) {
+          this.router.navigateByUrl(appPath);
+        }
+      });
     });
   }
 

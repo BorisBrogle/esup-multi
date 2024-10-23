@@ -153,8 +153,8 @@ export class MenuService {
     return {
       ...app,
       icon: app.icon,
-      iconSourceSvgLightTheme: app.iconSourceSvgLightTheme,
-      iconSourceSvgDarkTheme: app.iconSourceSvgDarkTheme,
+      iconSvgLight: app.iconSvgLight,
+      iconSvgDark: app.iconSvgDark,
       title: app.title,
       shortTitle: app.shortTitle,
       link: {
@@ -181,8 +181,8 @@ export class MenuService {
     return {
       ...app,
       icon: app.icon,
-      iconSourceSvgLightTheme: app.iconSourceSvgLightTheme,
-      iconSourceSvgDarkTheme: app.iconSourceSvgDarkTheme,
+      iconSvgLight: app.iconSvgLight,
+      iconSvgDark: app.iconSvgDark,
       title: app.title,
       shortTitle: app.shortTitle,
       link,

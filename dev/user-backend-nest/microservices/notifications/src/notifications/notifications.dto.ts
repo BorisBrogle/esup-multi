@@ -93,7 +93,7 @@ export interface DirectusResponse<T> {
 }
 
 export interface DirectusChannelTranslation {
-  languages_code: string;
+  languagesCode: string;
   label: string;
 }
 

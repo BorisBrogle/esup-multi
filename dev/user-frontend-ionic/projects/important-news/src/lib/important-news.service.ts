@@ -73,8 +73,8 @@ export class ImportantNewsService {
       // Si, ni la langue courante, ni la langue par défaut n'ont été trouvées, on prend la première traduction disponible
       const translation =
         /* eslint-disable @typescript-eslint/naming-convention */
-        importantNews.translations.find((t) => t.languages_code === currentLanguage) ||
-        importantNews.translations.find((t) => t.languages_code === this.environment.defaultLanguage) ||
+        importantNews.translations.find((t) => t.languagesCode === currentLanguage) ||
+        importantNews.translations.find((t) => t.languagesCode === this.environment.defaultLanguage) ||
         importantNews.translations[0];
       /* eslint-enable @typescript-eslint/naming-convention */
 

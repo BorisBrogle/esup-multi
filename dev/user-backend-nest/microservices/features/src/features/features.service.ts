@@ -62,18 +62,93 @@ export class FeaturesService {
   }
 
   public getFeatures(userRoles: string[]): Observable<Feature[]> {
-    const urlFeatures = `${this.directusApiConfig.apiUrl}/items/features`;
-    const urlWidgets = `${this.directusApiConfig.apiUrl}/items/widgets`;
-    const requestConfig = {
-      params: {
-        'filter[status][_eq]': 'published',
-        fields:
-          '*,translations.*,authorization.*,settings_by_role.settings_by_role_id.*',
-      },
+    const dataFeatures = JSON.stringify({
+      query: `query {
+          features(status: "published"){
+              id
+              description
+              icon
+              iconSvgDark
+              iconSvgLight
+              link
+              menu
+              position
+              routerLink
+              ssoService
+              status
+              type
+              translations{
+                  languagesCode
+                  searchKeywords
+                  shortTitle
+                  title
+              }
+              authorization {
+                  roles
+                  authorization
+              }
+              settingsByRole{
+                  position
+                  role
+              }
+          }
+      }`,
+      variables: {},
+    });
+
+    const dataWidgets = JSON.stringify({
+      query: `query {
+          widgets(status: "published"){
+              id
+              status
+              description
+              widget
+              iconSvgDark
+              iconSvgLight
+              icon
+              link
+              position
+              ssoService
+              statisticName
+              routerLink
+              color
+              type
+              translations{
+                  languagesCode
+                  content
+                  title
+              }
+              authorization {
+                  roles
+                  authorization
+              }
+              settingsByRole{
+                  position
+                  role
+              }
+          }
+      }`,
+      variables: {},
+    });
+
+    const configFeatures = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.FEATURES_SERVICE_GRAPHQL_API_URL,
       headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${this.directusApiConfig.bearerToken}`,
+        'Content-Type': 'application/json',
       },
+      data: dataFeatures,
+    };
+
+    const configWidgets = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.FEATURES_SERVICE_GRAPHQL_API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: dataWidgets,
     };
 
     const featuresPositionHelper = new FeaturesPositionHelper(userRoles);
@@ -86,31 +161,29 @@ export class FeaturesService {
     const directusFeaturesToFeatures = (feature: DirectusFeature): Feature => {
       return {
         ...feature,
-        settings_by_role: feature.settings_by_role.map(
-          (sbr) => sbr.settings_by_role_id,
-        ),
+        settingsByRole: feature.settingsByRole.map((sbr) => sbr.settingsByRole),
       };
     };
 
     return zip(
-      this.httpService.get<DirectusResponse<DirectusFeature[]>>(
-        urlFeatures,
-        requestConfig,
-      ),
-      this.httpService.get<DirectusResponse<DirectusFeature[]>>(
-        urlWidgets,
-        requestConfig,
-      ),
+      this.httpService.request(configFeatures),
+      this.httpService.request(configWidgets),
     ).pipe(
       catchError((err: any) => {
-        const errorMessage = 'Unable to get directus features';
-        this.logger.error(errorMessage, err);
-        throw new RpcException(errorMessage);
+        const errorMessage = 'Unable to get cms connector features';
+        this.logger.error(err.response.data);
+        throw new RpcException(err);
       }),
       map((res) =>
         Array.prototype.concat(
-          res[0].data.data.map((f) => ({ ...f, id: `feature:${f.id}` })),
-          res[1].data.data.map((w) => ({ ...w, id: `widget:${w.id}` })),
+          res[0].data.data['features'].map((f) => ({
+            ...f,
+            id: `feature:${f.id}`,
+          })),
+          res[1].data.data['widgets'].map((w) => ({
+            ...w,
+            id: `widget:${w.id}`,
+          })),
         ),
       ),
       map((features: DirectusFeature[]): Feature[] =>

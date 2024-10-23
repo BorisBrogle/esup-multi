@@ -59,26 +59,39 @@ export class PageContentService {
   }
 
   public getPageContent(): Observable<PageContentResultDto> {
-    const url = `${this.directusApiConfig.url}/items/contact_us`;
-    const requestConfig = {
-      params: {
-        fields: 'icon,translations.*',
-      },
+    const data = JSON.stringify({
+      query: `query {
+          contactUs{
+              id
+              to
+              icon
+              translations{
+                  languagesCode
+                  content
+                  title
+              }
+          }
+      }`,
+      variables: {},
+    });
+
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.CONTACT_US_SERVICE_GRAPHQL_API_URL,
       headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${this.directusApiConfig.bearerToken}`,
+        'Content-Type': 'application/json',
       },
+      data: data,
     };
 
-    return this.httpService
-      .get<DirectusResponse<PageContentResultDto>>(url, requestConfig)
-      .pipe(
-        catchError((err: any) => {
-          const errorMessage = 'Unable to get directus contact-us';
-          this.logger.error(errorMessage, err);
-          throw new RpcException(errorMessage);
-        }),
-        map((res) => res.data.data),
-      );
+    return this.httpService.request(config).pipe(
+      catchError((err: any) => {
+        const errorMessage = 'Unable to get cms connector contact-us';
+        this.logger.error(errorMessage, err);
+        throw new RpcException(errorMessage);
+      }),
+      map((res) => res.data.data),
+    );
   }
 }

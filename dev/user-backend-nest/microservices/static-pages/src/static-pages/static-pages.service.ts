@@ -61,26 +61,43 @@ export class StaticPagesService {
   }
 
   getStaticPages(): Observable<DirectusStaticPageResultDto[]> {
-    const url = `${this.directusApiConfig.url}/items/pages`;
+    const data = JSON.stringify({
+      query: `query {
+          pages(status: "published"){
+                id
+                status
+                icon
+                iconSvgDark
+                iconSvgLight
+                position
+                statisticName
+                translations {
+                    languagesCode
+                    content
+                    title
+                }
+            }
+      }`,
+      variables: {},
+    });
 
-    return this.httpService
-      .get<DirectusResponse<DirectusStaticPageResultDto[]>>(url, {
-        params: {
-          'filter[status][_eq]': 'published',
-          fields: '*,translations.*',
-        },
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${this.directusApiConfig.bearerToken}`,
-        },
-      })
-      .pipe(
-        catchError((err: any) => {
-          const errorMessage = 'Unable to get directus static pages data';
-          this.logger.error(errorMessage, err);
-          throw new RpcException(errorMessage);
-        }),
-        map((res) => res.data.data),
-      );
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.STATIC_PAGES_SERVICE_GRAPHQL_API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: data,
+    };
+
+    return this.httpService.request(config).pipe(
+      catchError((err: any) => {
+        const errorMessage = 'Unable to get cms connector static pages data';
+        this.logger.error(errorMessage, err);
+        throw new RpcException(errorMessage);
+      }),
+      map((res) => res.data.data),
+    );
   }
 }

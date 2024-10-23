@@ -58,23 +58,38 @@ export class SocialNetworkService {
 
   public getSocialNetworks(): Observable<SocialNetworkDto[]> {
     this.logger.log('get social networks');
-    const url = `${this.directusApiConfig.apiUrl}/items/social_networks`;
-    return this.httpService
-      .get<DirectusResponse<SocialNetworkDto[]>>(url, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${this.directusApiConfig.bearerToken}`,
-        },
-      })
-      .pipe(
-        catchError((err: any) => {
-          const errorMessage = 'Unable to get directus social networks data';
-          this.logger.error(errorMessage, err);
-          throw new RpcException(errorMessage);
-        }),
-        map((res) => {
-          return res.data.data;
-        }),
-      );
+
+    const data = JSON.stringify({
+      query: `query {
+            socialNetworks{
+                    id
+                    icon
+                    link
+                    title
+                }
+            }`,
+      variables: {},
+    });
+
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.SOCIAL_NETWORK_SERVICE_GRAPHQL_API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: data,
+    };
+
+    return this.httpService.request(config).pipe(
+      catchError((err: any) => {
+        const errorMessage = 'Unable to get cms connector social networks data';
+        this.logger.error(errorMessage, err);
+        throw new RpcException(errorMessage);
+      }),
+      map((res) => {
+        return res.data.data;
+      }),
+    );
   }
 }

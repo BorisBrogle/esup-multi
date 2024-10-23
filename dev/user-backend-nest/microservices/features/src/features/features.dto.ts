@@ -43,7 +43,7 @@ export interface Authorization {
 }
 
 export interface FeatureTranslation {
-  languages_code: string;
+  languagesCode: string;
   title?: string;
   shortTitle?: string;
   content?: string;
@@ -67,11 +67,11 @@ interface FeatureCommon<SBR> {
   widget?: string;
   translations: FeatureTranslation[];
   authorization: Authorization | null;
-  settings_by_role: SBR[];
+  settingsByRole: SBR[];
   menu: string | null;
   icon?: string;
-  iconSourceSvgLightTheme?: string;
-  iconSourceSvgDarkTheme?: string;
+  iconSvgLight?: string;
+  iconSvgDark?: string;
   color?: string;
   statisticName?: string;
 }
@@ -90,7 +90,7 @@ export interface InternalFeature extends FeatureCommon<SettingsByRole> {
 export type Feature = ExternalFeature | InternalFeature;
 
 interface DirectusSettingsByRole {
-  settings_by_role_id: SettingsByRole;
+  settingsByRole: SettingsByRole;
 }
 
 export interface DirectusExternalFeature

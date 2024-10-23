@@ -61,26 +61,37 @@ export class LoginPageContentService {
   }
 
   public getLoginPageContent(): Observable<LoginPageContentResultDto> {
-    const url = `${this.directusApiConfig.url}/items/login`;
-    const requestConfig = {
-      params: {
-        fields: 'translations.*',
-      },
+    const data = JSON.stringify({
+      query: `query {
+          login{
+              id
+              translations {
+                  languagesCode
+                  connexionText
+                  notAuthenticatedText
+              }
+          }
+        }`,
+      variables: {},
+    });
+
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.AUTH_SERVICE_GRAPHQL_API_URL,
       headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${this.directusApiConfig.bearerToken}`,
+        'Content-Type': 'application/json',
       },
+      data: data,
     };
 
-    return this.httpService
-      .get<DirectusResponse<LoginPageContentResultDto>>(url, requestConfig)
-      .pipe(
-        catchError((err: any) => {
-          const errorMessage = 'Unable to get directus login page content';
-          this.logger.error(errorMessage, err);
-          throw new RpcException(errorMessage);
-        }),
-        map((res) => res.data.data),
-      );
+    return this.httpService.request(config).pipe(
+      catchError((err: any) => {
+        const errorMessage = 'Unable to get cms connector login page content';
+        this.logger.error(errorMessage, err);
+        throw new RpcException(errorMessage);
+      }),
+      map((res) => res.data.data),
+    );
   }
 }

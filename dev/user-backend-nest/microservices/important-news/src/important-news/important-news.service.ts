@@ -58,28 +58,50 @@ export class ImportantNewsService {
   }
 
   public getImportantNews(): Observable<DirectusImportantNews[]> {
-    const url = `${this.directusApiConfig.url}/items/important_news`;
+    const data = JSON.stringify({
+      query: `query {
+          importantNews(status: "published"){
+              id
+              status
+              image
+              link
+              color
+              position
+              statisticName
+              translations{
+                  languagesCode
+                  content
+                  buttonLabel
+                  title
+              }
+              authorization {
+                  roles
+                  authorization
+              }
+          }
+      }`,
+      variables: {},
+    });
 
-    return this.httpService
-      .get<DirectusResponse<DirectusImportantNews[]>>(url, {
-        params: {
-          'filter[status][_eq]': 'published',
-          fields: '*,translations.*,authorization.*',
-        },
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${this.directusApiConfig.bearerToken}`,
-        },
-      })
-      .pipe(
-        catchError((err: any) => {
-          const errorMessage = 'Unable to get directus important news data';
-          this.logger.error(errorMessage, err);
-          throw new RpcException(errorMessage);
-        }),
-        map((res) => {
-          return res.data.data;
-        }),
-      );
+    const config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: process.env.IMPORTANT_NEWS_SERVICE_GRAPHQL_API_URL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: data,
+    };
+
+    return this.httpService.request(config).pipe(
+      catchError((err: any) => {
+        const errorMessage = 'Unable to get cms connector important news data';
+        this.logger.error(errorMessage, err);
+        throw new RpcException(errorMessage);
+      }),
+      map((res) => {
+        return res.data.data['importantNews'];
+      }),
+    );
   }
 }

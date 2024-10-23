@@ -57,7 +57,7 @@ export interface DirectusResponse<T> {
 }
 
 export interface DirectusImportantNewsTranslation {
-  language_code: string;
+  languagesCode: string;
   title: string;
   content: string;
   buttonLabel?: string;

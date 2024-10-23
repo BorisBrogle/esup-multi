@@ -50,7 +50,7 @@ export interface DirectusResponse<T> {
 }
 
 export interface DirectusStaticPageTranslation {
-  languages_code: string;
+  languagesCode: string;
   title: string;
   content: string;
 }
